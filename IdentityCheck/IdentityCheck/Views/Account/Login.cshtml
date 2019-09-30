@@ -1,0 +1,26 @@
+﻿@model LoginRequest
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<h1>Login to your account</h1>
+<form asp-controller="Account" asp-action="Login" method="post">
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" asp-for="@Model.Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" asp-for="@Model.Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    @foreach (var error in Model.ErrorMessages)
+    {
+        <span class="text-danger">@error</span>
+    }
+    <button type="submit" class="btn btn-primary">Login</button>
+
+
+</form>

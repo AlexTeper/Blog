@@ -1,0 +1,60 @@
+﻿@using ReflectionIT.Mvc.Paging;
+@addTagHelper *, ReflectionIT.Mvc.Paging
+
+@model IndexViewModel
+
+@{
+    ViewBag.Title = "Home";
+}
+
+<h1 class="h1 text-center" style="padding:5px">My posts</h1>
+<table class="table table-striped">
+
+    @if (Model != null)
+    {
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Delete</th>
+
+                @if (User.IsInRole("SuperUser"))
+                {
+                    <th scope="col">Edit</th>
+                }
+
+            </tr>
+        </thead>
+        @foreach (var post in Model.PagingList)
+        {
+            <tr>
+                <td>@post.Title</td>
+                <td>@post.Description</td>
+                <td>
+                    <form asp-controller="Post" asp-action="Delete" asp-route-id="@post.PostId" method="post">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+                @if (User.IsInRole("SuperUser"))
+                {
+                    <td>
+                        <form asp-controller="Post" asp-action="Edit" asp-route-id="@post.PostId" method="get">
+                            <button type="submit" class="btn btn-primary">Edit</button>
+                        </form>
+                    </td>
+                }
+            </tr>
+        }
+    }
+</table>
+
+<nav aria-label="Hotels" class="nav">
+    <vc:pager paging-list="@Model.PagingList" />
+</nav>
+
+
+
+
+
+
+
