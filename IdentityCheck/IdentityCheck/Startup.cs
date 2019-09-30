@@ -67,7 +67,7 @@ namespace IdentityCheck
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, UserManager<ApplicationUser> userManager, ApplicationDbContext applicationContext)
         {
             ApplicationDbInitializer.SeedUsers(userManager);
 
@@ -82,6 +82,7 @@ namespace IdentityCheck
                 app.UseHsts();
             }
 
+            applicationContext.Database.Migrate();  // database migration to remote server
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseMvc();
