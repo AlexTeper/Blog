@@ -63,6 +63,13 @@ namespace IdentityCheck.Services.User
                 .ToList();
         }
 
+        public async Task SaveUserAsync(ApplicationUser user)
+        {
+            applicationDbContext.Attach(user);
+            await applicationDbContext.SaveChangesAsync();
+
+        }
+
         private List<string> checkLoginErrors(SignInResult result, List<string> errors)
         {
             if (result.IsLockedOut)

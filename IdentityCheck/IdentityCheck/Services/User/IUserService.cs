@@ -14,6 +14,6 @@ namespace IdentityCheck.Services
         Task Logout();
         Task<List<string>> RegisterAsync(RegisterRequest model);
         Task<List<Post>> GetPostsAsync(ApplicationUser user);
-
+        Task SaveUserAsync(ApplicationUser user);
     }
 }

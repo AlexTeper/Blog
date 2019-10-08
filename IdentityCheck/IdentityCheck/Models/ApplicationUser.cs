@@ -9,5 +9,6 @@ namespace IdentityCheck.Models
     public class ApplicationUser : IdentityUser
     {
         public IEnumerable<Post> Posts { get; set; }
+        public string TimeZoneId { get; set; }
     }
 }
