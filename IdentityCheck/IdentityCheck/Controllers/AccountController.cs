@@ -17,10 +17,12 @@ namespace IdentityCheck.Controllers
     public class AccountController : Controller
     {
         private readonly IUserService userService;
+        private readonly IDateTimeService dateTimeService;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, IDateTimeService dateTimeService)
         {
             this.userService = userService;
+            this.dateTimeService = dateTimeService;
         }
 
         [HttpGet("/register")]
@@ -74,6 +76,21 @@ namespace IdentityCheck.Controllers
         {
             await userService.Logout();
             return RedirectToAction(nameof(Login));
+        }
+
+        [Authorize]
+        [HttpGet("/settings")]
+        public IActionResult Settings()
+        {
+            return View();
+        }
+
+        [HttpPost("/settings")]
+        public async Task<IActionResult> Settings(string timeZoneId)
+        {
+            var user = await userService.GetCurrentUser();
+            await dateTimeService.SetUserTimeZone(user, timeZoneId);
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
     }

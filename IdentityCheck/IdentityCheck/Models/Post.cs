@@ -13,7 +13,7 @@ namespace IdentityCheck.Models
         public string Description { get; set; }
         public ApplicationUser Author { get; set; }
         public string AuthorId { get; set; }
-
+        public DateTime CreatedAt { get; set; }
 
     }
 }

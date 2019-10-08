@@ -16,7 +16,6 @@ namespace IdentityCheck.Services
             this.userService = userService;
         }
 
-
         public IEnumerable<TimeZoneInfo> GetAvailableTimeZones()
         {
             return TimeZoneInfo.GetSystemTimeZones();
@@ -29,7 +28,11 @@ namespace IdentityCheck.Services
                 return utcDateTime;
             }
 
-            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utcDateTime, user.TimeZoneId);
+            var timezoneinfo = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZoneId);
+
+            return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timezoneinfo);
+
+           // return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utcDateTime, user.TimeZoneId);
         }
 
         public async Task SetUserTimeZone(ApplicationUser user, string timeZoneId)

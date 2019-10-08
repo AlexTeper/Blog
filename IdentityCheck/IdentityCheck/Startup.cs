@@ -61,6 +61,7 @@ namespace IdentityCheck
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IDateTimeService, DateTimeService>();
             services.SetUpAutoMapper();
             services.AddPaging();
 

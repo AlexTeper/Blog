@@ -70,6 +70,18 @@ namespace IdentityCheck.Services.User
 
         }
 
+        public async Task<ApplicationUser> GetCurrentUser()
+        {
+            var claimsPrincipal = signInManager.Context.User;
+
+            if (claimsPrincipal == null)
+            {
+                return null;
+            }
+
+            return await userManager.GetUserAsync(claimsPrincipal);
+        }
+
         private List<string> checkLoginErrors(SignInResult result, List<string> errors)
         {
             if (result.IsLockedOut)
