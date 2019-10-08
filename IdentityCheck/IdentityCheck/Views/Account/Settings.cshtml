@@ -1,12 +1,21 @@
-﻿@inject  IDateTimeService DateTimeService
+﻿@model string
+@inject  IDateTimeService DateTimeService
 
 <h3>User settings</h3>
 <form asp-controller="Account" asp-action="Settings" method="post">
     <label>TimeZones</label>
     <select name="timeZoneId">
-        @foreach(var timezone in DateTimeService.GetAvailableTimeZones())
+        @foreach (var timezone in DateTimeService.GetAvailableTimeZones())
         {
-            <option value="@timezone.Id">@timezone.DisplayName</option>
+            @if (timezone.Id == Model)
+            {
+                <option value="@timezone.Id" selected>@timezone.DisplayName</option>
+            }
+            else
+            {
+                <option value="@timezone.Id">@timezone.DisplayName</option>
+            }
+
         }
     </select>
     <button class="btn btn-primary">Save Changes</button>

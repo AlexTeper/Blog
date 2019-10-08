@@ -70,7 +70,7 @@ namespace IdentityCheck.Services.User
 
         }
 
-        public async Task<ApplicationUser> GetCurrentUser()
+        public async Task<ApplicationUser> GetCurrentUserAsync()
         {
             var claimsPrincipal = signInManager.Context.User;
 

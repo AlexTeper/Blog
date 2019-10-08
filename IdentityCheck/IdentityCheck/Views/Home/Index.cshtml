@@ -6,7 +6,7 @@
 @model IndexViewModel
 
 @{
-    var user = await UserService.GetCurrentUser();
+    var user = await UserService.GetCurrentUserAsync();
     ViewBag.Title = "Home";
 }
 
@@ -42,28 +42,30 @@
         </thead>
         @foreach (var post in Model.PagingList)
         {
-            <tr>
-                <td><a asp-controller="Post" asp-action="Post" asp-route-postid="@post.PostId">@post.Title</a></td>
-                <td>@post.Description</td>
-                <td>@DateTimeService.GetLocalDateTime(user, post.CreatedAt)</td>
-                <td>
-                    <form asp-controller="Post" asp-action="Delete" asp-route-id="@post.PostId" method="post">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </td>
-                @if (User.IsInRole("SuperUser"))
-                {
-                    <td>
-                        <form asp-controller="Post" asp-action="Edit" asp-route-postid="@post.PostId" method="get">
-                            <button type="submit" class="btn btn-primary">Edit</button>
-                        </form>
-                    </td>
+<tr>
+    <td><a asp-controller="Post" asp-action="Post" asp-route-postid="@post.PostId">@post.Title</a></td>
+    <td>@post.Description</td>
+    <td>@DateTimeService.GetLocalDateTime(user, post.CreatedAt)</td>
+    <td>
+        <form asp-controller="Post" asp-action="Delete" asp-route-id="@post.PostId" method="post">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </td>
 
-                    <td>
-                        <a role="button" class="btn btn-primary" asp-controller="Post" asp-action="AddImage" asp-route-postid="@post.PostId">Add image</a>
-                    </td>
-                }
-            </tr>
+    @if (User.IsInRole("SuperUser"))
+    {
+        <td>
+            <form asp-controller="Post" asp-action="Edit" asp-route-postid="@post.PostId" method="get">
+                <button type="submit" class="btn btn-primary">Edit</button>
+            </form>
+        </td>
+
+        <td>
+            <a role="button" class="btn btn-primary" asp-controller="Post" asp-action="AddImage" asp-route-postid="@post.PostId">Add image</a>
+        </td>
+    }
+    <td>@DateTimeService.TimeAgo(user, post.CreatedAt)</td>
+</tr>
         }
     }
 </table>

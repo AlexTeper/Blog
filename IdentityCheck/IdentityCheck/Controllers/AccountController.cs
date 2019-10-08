@@ -80,16 +80,17 @@ namespace IdentityCheck.Controllers
 
         [Authorize]
         [HttpGet("/settings")]
-        public IActionResult Settings()
+        public async Task<IActionResult> Settings()
         {
-            return View();
+            var user = await userService.GetCurrentUserAsync();
+            return View(nameof(Settings), user.TimeZoneId);
         }
 
         [HttpPost("/settings")]
         public async Task<IActionResult> Settings(string timeZoneId)
         {
-            var user = await userService.GetCurrentUser();
-            await dateTimeService.SetUserTimeZone(user, timeZoneId);
+            var user = await userService.GetCurrentUserAsync();
+            await dateTimeService.SetUserTimeZoneAsync(user, timeZoneId);
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 

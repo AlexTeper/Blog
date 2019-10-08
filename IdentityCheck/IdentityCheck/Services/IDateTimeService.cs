@@ -9,7 +9,8 @@ namespace IdentityCheck.Services
     public interface IDateTimeService
     {
         IEnumerable<TimeZoneInfo> GetAvailableTimeZones();
-        Task SetUserTimeZone(ApplicationUser user, string timeZoneId);
+        Task SetUserTimeZoneAsync(ApplicationUser user, string timeZoneId);
         DateTime GetLocalDateTime(ApplicationUser user, DateTime utcDateTime);
+        string TimeAgo(ApplicationUser user, DateTime dt);
     }
 }
