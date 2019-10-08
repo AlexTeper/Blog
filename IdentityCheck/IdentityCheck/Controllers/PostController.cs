@@ -3,6 +3,7 @@ using IdentityCheck.Models;
 using IdentityCheck.Models.RequestModels;
 using IdentityCheck.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,12 +18,14 @@ namespace IdentityCheck.Controllers
     {
         private readonly IPostService postService;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly IImageService imageService;
         private readonly IMapper mapper;
 
-        public PostController(IPostService postService, UserManager<ApplicationUser> userManager, IMapper mapper)
+        public PostController(IPostService postService, UserManager<ApplicationUser> userManager, IMapper mapper, IImageService imageService)
         {
             this.postService = postService;
             this.userManager = userManager;
+            this.imageService = imageService;
             this.mapper = mapper;
         }
 
@@ -38,7 +41,9 @@ namespace IdentityCheck.Controllers
             if (ModelState.IsValid)
             {
                 var currentUser = await userManager.GetUserAsync(HttpContext.User);
-                await postService.SaveAsync(postRequest, currentUser);
+                postRequest.Author = currentUser;
+                postRequest.AuthorId = currentUser.Id;
+                await postService.SaveAsync(postRequest);
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
             return View(postRequest);
@@ -49,6 +54,7 @@ namespace IdentityCheck.Controllers
         public async Task<IActionResult> Delete(long id)
         {
             await postService.DeleteAsync(id);
+            await imageService.DeleteAllFileAsync(id);
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
@@ -67,10 +73,33 @@ namespace IdentityCheck.Controllers
         {
             if (ModelState.IsValid)
             {
+                var currentUser = await userManager.GetUserAsync(HttpContext.User);
+                postRequest = mapper.Map<ApplicationUser, PostRequest>(currentUser, postRequest);
                 await postService.EditAsync(id, postRequest);
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
             return View(postRequest);
+        }
+
+        [Authorize(Roles = "SuperUser")]
+        [HttpGet("/addimage/{postid}")]
+        public IActionResult AddImage(long postId)
+        {
+            return View(postId);
+        }
+
+        [HttpPost("/addimage/{postid}")]
+        public async Task<IActionResult> AddImage(List<IFormFile> imageList, long postId)
+        {
+            var wrongFiles = await imageService.UploadImagesAsync(imageList, postId);
+            return RedirectToAction(nameof(Post), postId);
+        }
+
+        [HttpGet("/post/{postId}")]
+        public async Task<IActionResult> Post(long postId)
+        {
+            var images = await imageService.GetImageListAsync(postId);
+            return View(images);
         }
     }
 }

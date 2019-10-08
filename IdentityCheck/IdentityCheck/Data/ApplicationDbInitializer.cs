@@ -11,7 +11,8 @@ namespace IdentityCheck.Data
     {
         public static void SeedUsers(UserManager<ApplicationUser> userManager)
         {
-            if (userManager.FindByEmailAsync("superUser@gmail.com").Result == null)
+            var tempUser = userManager.FindByEmailAsync("superUser@gmail.com").Result;
+            if (tempUser == null)
             {
                 ApplicationUser user = new ApplicationUser
                 {
@@ -30,8 +31,14 @@ namespace IdentityCheck.Data
                 if (!userManager.IsInRoleAsync(userCurrent, "SuperUser").Result)
                 {
                     userManager.AddToRoleAsync(user, "SuperUser").Wait();
-                }
+                }           
             }
+
+            if (!userManager.IsInRoleAsync(tempUser, "SuperUser").Result)
+            {
+                userManager.AddToRoleAsync(tempUser, "SuperUser").Wait();
+            }
+
         }
     }
 }

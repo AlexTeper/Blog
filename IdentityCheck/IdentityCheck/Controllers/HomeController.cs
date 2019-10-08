@@ -7,6 +7,7 @@ using IdentityCheck.Services;
 using Microsoft.AspNetCore.Authorization;
 using IdentityCheck.Models.ViewModels;
 using ReflectionIT.Mvc.Paging;
+using IdentityCheck.Utils;
 
 namespace IdentityCheck.Controllers
 {
@@ -15,13 +16,15 @@ namespace IdentityCheck.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly IUserService userService;
+        private readonly IPostService postService;
 
-        public HomeController(UserManager<ApplicationUser> userManager, IUserService userService, SignInManager<ApplicationUser> signInManager)
+        public HomeController(UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IPostService postService)
         {
             this.userManager = userManager;
-            this.userService = userService;
             this.signInManager = signInManager;
+            this.postService = postService;
         }
 
         [HttpGet("/")]
@@ -33,17 +36,16 @@ namespace IdentityCheck.Controllers
 
         [Authorize]
         [HttpGet("/home")]
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(QueryParams queryParams)
         {
             var currentUser = await userManager.GetUserAsync(HttpContext.User);
-            var posts = await userService.GetPostsAsync(currentUser);
-            var model = PagingList.Create(posts, 2, page);
-
+            var posts = await postService.GetPostsByParamsAsync(queryParams, currentUser);
             return View(new IndexViewModel
             {
                 AppUser = currentUser,
-                Posts = posts,
-                PagingList = model
+                PagingList = posts,
+                QueryParams = queryParams,
+                ActionName = nameof(Index)
             });
         }
     }

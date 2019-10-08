@@ -12,7 +12,7 @@ namespace IdentityCheck.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public ApplicationUser Author { get; set; }
-        public string ApplicationUserId { get; set; }
+        public string AuthorId { get; set; }
 
 
     }

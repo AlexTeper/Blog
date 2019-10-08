@@ -8,6 +8,16 @@
 }
 
 <h1 class="h1 text-center" style="padding:5px">My posts</h1>
+
+<form asp-controller="Home" asp-action="Index" method="get">
+    <div class="form-group">
+        <input type="text" asp-for="@Model.QueryParams.Title" class=form-control placeholder="Search by title" />
+        <input type="text" asp-for="@Model.QueryParams.Description" class="form-control" placeholder="Search by descripton" />
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a asp-action="@Model.ActionName" class="btn btn-danger" role="button">Clear flirters</a>
+    </div>
+</form>
+
 <table class="table table-striped">
 
     @if (Model != null)
@@ -21,6 +31,7 @@
                 @if (User.IsInRole("SuperUser"))
                 {
                     <th scope="col">Edit</th>
+                    <th scope="col">Add Image</th>
                 }
 
             </tr>
@@ -28,7 +39,7 @@
         @foreach (var post in Model.PagingList)
         {
             <tr>
-                <td>@post.Title</td>
+                <td><a asp-controller="Post" asp-action="Post" asp-route-postid="@post.PostId">@post.Title</a></td>
                 <td>@post.Description</td>
                 <td>
                     <form asp-controller="Post" asp-action="Delete" asp-route-id="@post.PostId" method="post">
@@ -38,9 +49,13 @@
                 @if (User.IsInRole("SuperUser"))
                 {
                     <td>
-                        <form asp-controller="Post" asp-action="Edit" asp-route-id="@post.PostId" method="get">
+                        <form asp-controller="Post" asp-action="Edit" asp-route-postid="@post.PostId" method="get">
                             <button type="submit" class="btn btn-primary">Edit</button>
                         </form>
+                    </td>
+
+                    <td>
+                        <a role="button" class="btn btn-primary" asp-controller="Post" asp-action="AddImage" asp-route-postid="@post.PostId" >Add image</a>
                     </td>
                 }
             </tr>
@@ -48,9 +63,16 @@
     }
 </table>
 
-<nav aria-label="Hotels" class="nav">
-    <vc:pager paging-list="@Model.PagingList" />
-</nav>
+<div class="pagintaion-row">
+    @for (int i = 1; i <= Model.PagingList.PageCount; i++)
+    {
+        <a role="button" class="btn btn-primary"
+           asp-action="@Model.ActionName"
+           asp-route-title="@Model.QueryParams.Title"
+           asp-route-description="@Model.QueryParams.Description"
+           asp-route-page="@i">@i</a>
+    }
+</div>
 
 
 

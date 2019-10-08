@@ -17,5 +17,7 @@ namespace IdentityCheck.Models.RequestModels
         [Required(ErrorMessage = "Description required")]
         [MinLength(3, ErrorMessage = "Description must contain at least 3 characters")]
         public string Description { get; set; }
+        public ApplicationUser Author { get; set; }
+        public string AuthorId { get; set; }
     }
 }

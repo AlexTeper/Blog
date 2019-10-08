@@ -6,7 +6,9 @@ using AutoMapper;
 using IdentityCheck.Data;
 using IdentityCheck.Models;
 using IdentityCheck.Models.RequestModels;
+using IdentityCheck.Utils;
 using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
 
 namespace IdentityCheck.Services
 {
@@ -14,7 +16,7 @@ namespace IdentityCheck.Services
     {
 
         private readonly ApplicationDbContext applicationDbContext;
-        private readonly IMapper mapper; // still needs to be implemented
+        private readonly IMapper mapper;
 
         public PostService(ApplicationDbContext applicationDbContext, IMapper mapper)
         {
@@ -32,9 +34,7 @@ namespace IdentityCheck.Services
         public async Task<Post> EditAsync(long id, PostRequest request)
         {
             var post = await FindByIdAsync(id);
-
             post = mapper.Map<PostRequest, Post>(request, post);
-            
             await applicationDbContext.SaveChangesAsync();
             return post;
         }
@@ -44,20 +44,23 @@ namespace IdentityCheck.Services
             return await applicationDbContext.Posts.Include(p => p.Author).FirstOrDefaultAsync(p => p.PostId == postId);
         }
 
-        public async Task<Post> SaveAsync(PostRequest postRequest, ApplicationUser user)
+        public async Task<PagingList<Post>> GetPostsByParamsAsync(QueryParams queryParams, ApplicationUser user)
         {
-            var post = new Post
-            {
-                Title = postRequest.Title,
-                Description = postRequest.Description,
-                ApplicationUserId = user.Id,
-                Author = user
-            };
+            var posts = await applicationDbContext.Posts.Include(p => p.Author)
+               .Where(p => p.Title.Contains(queryParams.Title) || String.IsNullOrEmpty(queryParams.Title))
+               .Where(p => p.Description.Contains(queryParams.Description) || String.IsNullOrEmpty(queryParams.Description))
+               .Where(p => p.Author.Email == user.Email)
+               .ToListAsync();
+            return PagingList.Create(posts, 2, queryParams.Page);
+        }
+
+        public async Task<Post> SaveAsync(PostRequest postRequest)
+        {
+            var tempPost = new Post();
+            var post = mapper.Map<PostRequest, Post>(postRequest, tempPost);
             await applicationDbContext.Posts.AddAsync(post);
             await applicationDbContext.SaveChangesAsync();
             return post;
         }
-
-        
     }
 }

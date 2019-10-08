@@ -1,5 +1,6 @@
 ﻿using IdentityCheck.Models;
 using IdentityCheck.Models.RequestModels.Account;
+using IdentityCheck.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace IdentityCheck.Services
         Task Logout();
         Task<List<string>> RegisterAsync(RegisterRequest model);
         Task<List<Post>> GetPostsAsync(ApplicationUser user);
+
     }
 }

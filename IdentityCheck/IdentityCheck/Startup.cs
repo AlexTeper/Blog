@@ -60,6 +60,7 @@ namespace IdentityCheck
 
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IImageService, ImageService>();
             services.SetUpAutoMapper();
             services.AddPaging();
 
@@ -82,7 +83,7 @@ namespace IdentityCheck
                 app.UseHsts();
             }
 
-            applicationContext.Database.Migrate();  // database migration to remote server
+            //applicationContext.Database.Migrate();  // database migration to remote server
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseMvc();

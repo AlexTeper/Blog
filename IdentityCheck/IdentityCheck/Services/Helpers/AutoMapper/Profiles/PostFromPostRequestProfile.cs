@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace IdentityCheck.Services.Helpers.AutoMapper.Profiles
 {
-    public class PostProfile : Profile
+    public class PostFromPostRequestProfile : Profile
     {
-        public PostProfile()
+        public PostFromPostRequestProfile()
         {
             CreateMap<PostRequest, Post>()
                 .ForMember(
@@ -18,9 +18,13 @@ namespace IdentityCheck.Services.Helpers.AutoMapper.Profiles
                     opt => opt.MapFrom(src => src.Title))
                 .ForMember(
                     dest => dest.Description,
-                    opt => opt.MapFrom(src => src.Description));
-                                
-            CreateMap<Post, PostRequest>();
+                    opt => opt.MapFrom(src => src.Description))
+                .ForMember(
+                    dest => dest.Author,
+                    opt => opt.MapFrom(src => src.Author))
+                .ForMember(
+                    dest => dest.AuthorId,
+                    opt => opt.MapFrom(src => src.AuthorId));
         }
     }
 }

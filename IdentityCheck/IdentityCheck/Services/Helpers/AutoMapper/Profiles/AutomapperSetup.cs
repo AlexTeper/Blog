@@ -13,7 +13,8 @@ namespace IdentityCheck.Services.Helpers.AutoMapper.Profiles
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new PostProfile());
+                cfg.AddProfile(new PostFromPostRequestProfile());
+                cfg.AddProfile(new PostRequestFromUserProfile());
             });
 
             var mapper = config.CreateMapper();
