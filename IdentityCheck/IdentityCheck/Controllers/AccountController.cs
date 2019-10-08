@@ -3,7 +3,9 @@ using IdentityCheck.Models.RequestModels.Account;
 using IdentityCheck.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -86,11 +88,25 @@ namespace IdentityCheck.Controllers
             return View(nameof(Settings), user.TimeZoneId);
         }
 
+        
         [HttpPost("/settings")]
         public async Task<IActionResult> Settings(string timeZoneId)
         {
             var user = await userService.GetCurrentUserAsync();
             await dateTimeService.SetUserTimeZoneAsync(user, timeZoneId);
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+        
+
+        [HttpPost("/setLanguage")]
+        public IActionResult SetLanguage(string culture)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
