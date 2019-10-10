@@ -1,36 +1,36 @@
 ﻿@model RegisterRequest
-
+@inject IViewLocalizer Localizer
 @{
     ViewBag.Title = "Register";
 }
 
-<h2>Create an account</h2>
+    <h2>@Localizer["Create an account"]</h2>
 
-<form asp-controller="Account" asp-action="RegisterUser" method="post">
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+    <form asp-controller="Account" asp-action="RegisterUser" method="post">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label for="password">@Localizer["Password"]</label>
+            <input type="password" asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label for="password">Confirm password</label>
-        <input type="password" asp-for="ConfirmPassword" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label for="password">@Localizer["Confirm password"]</label>
+            <input type="password" asp-for="ConfirmPassword" class="form-control" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
 
-    @foreach (var error in Model.ErrorMessages)
-    {
-        <span class="text-danger">@error</span>
-    }
+        @foreach (var error in Model.ErrorMessages)
+        {
+            <span class="text-danger">@error</span>
+        }
 
-    <button type="submit" class="btn btn-primary">Register</button>
-    <a class="btn btn-danger" asp-controller="Account" asp-action="Login" role="button">Cancel</a>
+        <button type="submit" class="btn btn-primary">@Localizer["Registrate"]</button>
+        <a class="btn btn-danger" asp-controller="Account" asp-action="Login" role="button">@Localizer["Cancel"]</a>
 
-</form>
+    </form>

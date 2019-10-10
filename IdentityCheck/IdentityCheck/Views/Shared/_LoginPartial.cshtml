@@ -9,19 +9,27 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav ml-auto">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <span class="navbar-brand">Welcome @User.Identity.Name</span>
+                <span class="navbar-brand">@User.Identity.Name</span>
             </li>
+
+
             <li class="nav-item">
-                <a class="nav-link" asp-controller="Account" asp-action="Settings">User settings</a>
+                <a class="nav-link" asp-controller="Post" asp-action="Add" style="color:whitesmoke">@Localizer["Add post"]</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Post" asp-action="Add">Add post</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:whitesmoke">
+                    Settings
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" asp-controller="Account" asp-action="Settings">@Localizer["Settings"]</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" asp-controller="Account" asp-action="Logout">@Localizer["Logout"]</a>
+                </div>
             </li>
         </ul>
     </div>

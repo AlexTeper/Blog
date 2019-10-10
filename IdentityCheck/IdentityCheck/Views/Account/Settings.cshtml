@@ -39,10 +39,12 @@
 
 <h5>Language</h5>
 <div title="@Localizer["Request culture provider:"] @requestCulture?.Provider?.GetType().Name">
-    <form id="selectLanguage" class="form-horizontal" asp-controller="Account" asp-action="SetLanguage" asp-route-user="@User.Identity" method="post" role="form">
+    <form id="selectLanguage" asp-controller="Account" asp-action="SetLanguage" asp-route-user="@User.Identity" method="post" role="form">
         <div class="form-group">
             <select name="culture" onchange="this.form.submit();" asp-for="@requestCulture.RequestCulture.UICulture.Name"
                     asp-items="cultureItems" class="form-control" title="@Localizer["Select a language"]"></select>
         </div>
     </form>
+
+    <a class="btn btn-danger" asp-controller="Home" asp-action="Index" role="button">Back</a>
 </div>
