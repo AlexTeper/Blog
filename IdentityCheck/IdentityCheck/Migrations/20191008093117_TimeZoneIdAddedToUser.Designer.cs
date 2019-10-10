@@ -3,14 +3,16 @@ using System;
 using IdentityCheck.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IdentityCheck.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191008093117_TimeZoneIdAddedToUser")]
+    partial class TimeZoneIdAddedToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,8 +78,6 @@ namespace IdentityCheck.Migrations
 
                     b.Property<string>("AuthorId");
 
-                    b.Property<DateTime>("CreatedAt");
-
                     b.Property<string>("Description");
 
                     b.Property<string>("Title");
@@ -112,8 +112,8 @@ namespace IdentityCheck.Migrations
                     b.ToTable("AspNetRoles");
 
                     b.HasData(
-                        new { Id = "9979def5-a7f3-4673-8e9b-1844053ff71f", ConcurrencyStamp = "222bd0ee-634f-4777-b14d-1a003c408f4e", Name = "SuperUser", NormalizedName = "SUPERUSER" },
-                        new { Id = "bb315df2-4283-43a0-b512-be559e60fd25", ConcurrencyStamp = "41fea183-ef1c-4314-ac86-d937c29487a8", Name = "RegularUser", NormalizedName = "REGULARUSER" }
+                        new { Id = "9e45332b-1923-4aa0-a7bb-c992b55bcd24", ConcurrencyStamp = "e90fd3c1-8e94-4cf2-a607-78c58628ce29", Name = "SuperUser", NormalizedName = "SUPERUSER" },
+                        new { Id = "9488abb0-d2d0-455d-840b-0291d9b1acdb", ConcurrencyStamp = "3a6b2690-576c-4d95-887e-ed9d52d04e87", Name = "RegularUser", NormalizedName = "REGULARUSER" }
                     );
                 });
 

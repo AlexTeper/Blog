@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityCheck.Data;
 using IdentityCheck.Models;
 using IdentityCheck.Models.RequestModels.Account;
 using IdentityCheck.Utils;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,11 +58,32 @@ namespace IdentityCheck.Services.User
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, "RegularUser");
+                user.TimeZoneId = TimeZoneInfo.Local.Id;
+                await applicationDbContext.SaveChangesAsync();
                 await signInManager.SignInAsync(user, isPersistent: false);
             }
             return result.Errors
                 .Select(e => e.Description)
                 .ToList();
+        }
+
+        public async Task SaveUserAsync(ApplicationUser user)
+        {
+            applicationDbContext.Attach(user);
+            await applicationDbContext.SaveChangesAsync();
+
+        }
+
+        public async Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            var claimsPrincipal = signInManager.Context.User;
+
+            if (claimsPrincipal == null)
+            {
+                return null;
+            }
+
+            return await userManager.GetUserAsync(claimsPrincipal);
         }
 
         private List<string> checkLoginErrors(SignInResult result, List<string> errors)
@@ -82,6 +105,58 @@ namespace IdentityCheck.Services.User
                 errors.Add("Invalid login attempt");
             }
             return errors;
+        }
+
+
+        //GoogleAuth
+
+        public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl)
+        {
+            return signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+        }
+
+        public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync()
+        {
+            return await signInManager.GetExternalLoginInfoAsync();
+        }
+
+        public async Task<SignInResult> ExternalLoginSignInAsync(string loginProvider, string providerKey, bool isPersistent)
+        {
+            return await signInManager.ExternalLoginSignInAsync(loginProvider, providerKey, isPersistent);
+        }
+
+        public async Task<List<string>> CreateAndLoginGoogleUser(ExternalLoginInfo info)
+        {
+            var user = new ApplicationUser
+            {
+                Email = info.Principal.FindFirst(ClaimTypes.Email).Value,
+                UserName = info.Principal.FindFirst(ClaimTypes.Email).Value,
+            };
+
+
+            // Setting the local timeZoneId for the user because it's not nullable
+            if (user.TimeZoneId == null)
+            {
+                user.TimeZoneId = TimeZoneInfo.Local.Id;
+                await applicationDbContext.SaveChangesAsync();
+            }
+
+            var identResult = await userManager.CreateAsync(user);
+            if (identResult.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, "RegularUser");
+
+                // adding additional informations about the user
+                identResult = await userManager.AddLoginAsync(user, info);
+
+                if (identResult.Succeeded)
+                {
+                    await signInManager.SignInAsync(user, false);
+                }
+            }
+            return identResult.Errors
+                .Select(e => e.Description)
+                .ToList();
         }
 
     }

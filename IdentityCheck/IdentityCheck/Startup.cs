@@ -18,6 +18,11 @@ using IdentityCheck.Services.User;
 using AutoMapper;
 using IdentityCheck.Services.Helpers.AutoMapper.Profiles;
 using ReflectionIT.Mvc.Paging;
+using IdentityCheck.Configs;
+using Microsoft.AspNetCore.Mvc.Razor;
+using IdentityCheck.Resources;
+using System.Reflection;
+using Microsoft.Extensions.Localization;
 
 namespace IdentityCheck
 {
@@ -57,14 +62,41 @@ namespace IdentityCheck
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = false;
             });
-
+            services.SetLocalizationSource();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IDateTimeService, DateTimeService>();
             services.SetUpAutoMapper();
             services.AddPaging();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            // We store out google credentails in secrets with the help of our package manager console
+            // dotnet user-secrets set "Movies:ServiceApiKey" "12345"
+            // the SecretManager will create a new secrets.json for your project and stores it on
+            // your computer. Look it up :)
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    IConfigurationSection googleAuthNSection =
+                    Configuration.GetSection("Authentication:Google");
+
+                    options.ClientId = googleAuthNSection["ClientId"];
+                    options.ClientSecret = googleAuthNSection["ClientSecret"];
+                });
+
+            services.AddMvc()
+               .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+               .AddDataAnnotationsLocalization(o =>
+               {
+                   var type = typeof(SharedResources);
+                   var assemblyName = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
+                   var factory = services.BuildServiceProvider().GetService<IStringLocalizerFactory>();
+                   var localizer = factory.Create("SharedResources", assemblyName.Name);
+                   // for translating error messages
+                   o.DataAnnotationLocalizerProvider = (t, f) => localizer;
+               });
+               
+            services.SetLocalization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,6 +118,7 @@ namespace IdentityCheck
             //applicationContext.Database.Migrate();  // database migration to remote server
             app.UseStaticFiles();
             app.UseAuthentication();
+            app.UseRequestLocalization();
             app.UseMvc();
         }
     }
