@@ -11,17 +11,14 @@
     ViewBag.Title = "Home";
 }
 
-<h1 class="h1 text-center" style="padding:5px">My posts</h1>
-
-<p>@Localizer["Hello"]</p>
-
+<h1 class="h1 text-center" style="padding:5px">@Localizer["My posts"]</h1>
 
 <form asp-controller="Home" asp-action="Index" method="get">
     <div class="form-group">
-        <input type="text" asp-for="@Model.QueryParams.Title" class=form-control placeholder="Search by title" />
-        <input type="text" asp-for="@Model.QueryParams.Description" class="form-control" placeholder="Search by descripton" />
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a asp-action="@Model.ActionName" class="btn btn-danger" role="button">Clear flirters</a>
+        <input type="text" asp-for="@Model.QueryParams.Title" class=form-control placeholder=@Localizer["Search by title"] />
+        <input type="text" asp-for="@Model.QueryParams.Description" class="form-control" placeholder=@Localizer["Search by descripton"] />
+        <button type="submit" class="btn btn-primary">@Localizer["Search"]</button>
+        <a asp-action="@Model.ActionName" class="btn btn-danger" role="button">@Localizer["Clear filters"]</a>
     </div>
 </form>
 
@@ -31,16 +28,17 @@
     {
         <thead class="thead-dark">
             <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col">Date</th>
-                <th scope="col">Delete</th>
+                <th scope="col">@Localizer["Title"]</th>
+                <th scope="col">@Localizer["Description"]</th>
+                <th scope="col">@Localizer["Date"]</th>
+                <th scope="col">@Localizer["Delete"]</th>
 
                 @if (User.IsInRole("SuperUser"))
                 {
-                    <th scope="col">Edit</th>
-                    <th scope="col">Add Image</th>
+                    <th scope="col">@Localizer["Edit"]</th>
+                    <th scope="col">@Localizer["Add Image"]</th>
                 }
+                <th scope="col">@Localizer["Time span"]</th>
 
             </tr>
         </thead>
@@ -52,7 +50,7 @@
                 <td>@DateTimeService.GetLocalDateTime(user, post.CreatedAt)</td>
                 <td>
                     <form asp-controller="Post" asp-action="Delete" asp-route-id="@post.PostId" method="post">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger">@Localizer["Delete"]</button>
                     </form>
                 </td>
 
@@ -60,12 +58,12 @@
                 {
                     <td>
                         <form asp-controller="Post" asp-action="Edit" asp-route-postid="@post.PostId" method="get">
-                            <button type="submit" class="btn btn-primary">Edit</button>
+                            <button type="submit" class="btn btn-primary">@Localizer["Edit"]</button>
                         </form>
                     </td>
 
                     <td>
-                        <a role="button" class="btn btn-primary" asp-controller="Post" asp-action="AddImage" asp-route-postid="@post.PostId">Add image</a>
+                        <a role="button" class="btn btn-primary" asp-controller="Post" asp-action="AddImage" asp-route-postid="@post.PostId">@Localizer["Add Image"]</a>
                     </td>
                 }
                 <td>@DateTimeService.TimeAgo(user, post.CreatedAt)</td>
@@ -84,6 +82,7 @@
            asp-route-page="@i">@i</a>
     }
 </div>
+
 
 
 

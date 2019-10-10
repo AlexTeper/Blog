@@ -16,31 +16,35 @@
 }
 
 <h3>User settings</h3>
-<form asp-controller="Account" asp-action="Settings" method="post">
-    <label>TimeZones</label>
-    <select name="timeZoneId">
-        @foreach (var timezone in DateTimeService.GetAvailableTimeZones())
-        {
-            @if (timezone.Id == Model)
-            {
-                <option value="@timezone.Id" selected>@timezone.DisplayName</option>
-            }
-            else
-            {
-                <option value="@timezone.Id">@timezone.DisplayName</option>
-            }
 
-        }
-    </select>
-    <button class="btn btn-primary">Save Changes</button>
+<h5>Time Zone</h5>
+<form asp-controller="Account" asp-action="Settings" method="post">
+    <div class="form-group">
+        <select name="timeZoneId" class="form-control" onchange="this.form.submit();">
+            @foreach (var timezone in DateTimeService.GetAvailableTimeZones())
+            {
+                @if (timezone.Id == Model)
+                {
+                    <option value="@timezone.Id" selected>@timezone.DisplayName</option>
+                }
+                else
+                {
+                    <option value="@timezone.Id">@timezone.DisplayName</option>
+                }
+
+            }
+        </select>
+    </div>
 </form>
 
+<h5>Language</h5>
 <div title="@Localizer["Request culture provider:"] @requestCulture?.Provider?.GetType().Name">
-    <form id="selectLanguage" class="form-horizontal" asp-controller="Account" asp-action="SetLanguage" asp-route-user="@User.Identity" method="post" role="form">
+    <form id="selectLanguage" asp-controller="Account" asp-action="SetLanguage" asp-route-user="@User.Identity" method="post" role="form">
         <div class="form-group">
-            <label asp-for="@requestCulture.RequestCulture.UICulture.Name">@Localizer["Language"]</label>
             <select name="culture" onchange="this.form.submit();" asp-for="@requestCulture.RequestCulture.UICulture.Name"
                     asp-items="cultureItems" class="form-control" title="@Localizer["Select a language"]"></select>
         </div>
     </form>
+
+    <a class="btn btn-danger" asp-controller="Home" asp-action="Index" role="button">Back</a>
 </div>
