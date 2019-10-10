@@ -24,7 +24,10 @@ namespace IdentityCheck.Services.Helpers.AutoMapper.Profiles
                     opt => opt.MapFrom(src => src.Author))
                 .ForMember(
                     dest => dest.AuthorId,
-                    opt => opt.MapFrom(src => src.AuthorId));
+                    opt => opt.MapFrom(src => src.AuthorId))
+                .ForMember(
+                    dest => dest.CreatedAt,
+                    opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }
 }

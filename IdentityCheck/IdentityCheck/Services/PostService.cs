@@ -58,7 +58,6 @@ namespace IdentityCheck.Services
         {
             var tempPost = new Post();
             var post = mapper.Map<PostRequest, Post>(postRequest, tempPost);
-            post.CreatedAt = DateTime.UtcNow;
             await applicationDbContext.Posts.AddAsync(post);
             await applicationDbContext.SaveChangesAsync();
             return post;

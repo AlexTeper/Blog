@@ -69,14 +69,22 @@ namespace IdentityCheck
             services.AddTransient<IDateTimeService, DateTimeService>();
             services.SetUpAutoMapper();
             services.AddPaging();
-            /*
+
+            // We store out google credentails in secrets with the help of our package manager console
+            // dotnet user-secrets set "Movies:ServiceApiKey" "12345"
+            // the SecretManager will create a new secrets.json for your project and stores it on
+            // your computer. Look it up :)
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    IConfigurationSection googleAuthNSection =
+                    Configuration.GetSection("Authentication:Google");
+
+                    options.ClientId = googleAuthNSection["ClientId"];
+                    options.ClientSecret = googleAuthNSection["ClientSecret"];
+                });
+
             services.AddMvc()
-                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
-                .AddDataAnnotationsLocalization();
-                */
-            
-            services.AddMvc()
-               .AddJsonOptions(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                .AddDataAnnotationsLocalization(o =>
                {
@@ -84,9 +92,10 @@ namespace IdentityCheck
                    var assemblyName = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
                    var factory = services.BuildServiceProvider().GetService<IStringLocalizerFactory>();
                    var localizer = factory.Create("SharedResources", assemblyName.Name);
+                   // for translating error messages
                    o.DataAnnotationLocalizerProvider = (t, f) => localizer;
                });
-
+               
             services.SetLocalization();
         }
 

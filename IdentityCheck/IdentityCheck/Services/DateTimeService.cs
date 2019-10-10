@@ -18,6 +18,7 @@ namespace IdentityCheck.Services
 
         public IEnumerable<TimeZoneInfo> GetAvailableTimeZones()
         {
+
             return TimeZoneInfo.GetSystemTimeZones();
         }
 
@@ -29,6 +30,8 @@ namespace IdentityCheck.Services
             }
 
             var timezoneinfo = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZoneId);
+
+            // We convert the time from UTC to the user's timezone
             return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timezoneinfo);
         }
 
@@ -57,12 +60,20 @@ namespace IdentityCheck.Services
             }
         }
 
-        public string TimeAgo(ApplicationUser user, DateTime dateTime)
+        public string TimeAgo(ApplicationUser user, DateTime postDateTime)
         {
-            var timezoneinfo = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZoneId);
-            var dt = TimeZoneInfo.ConvertTimeFromUtc(dateTime, timezoneinfo);
-            var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timezoneinfo);
-            TimeSpan span = now - dt;
+            // Getting the user's timezone
+            var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZoneId);
+
+            // The post date is stored in UTC so we convert it to the user's timezone
+            var postDate = TimeZoneInfo.ConvertTimeFromUtc(postDateTime, userTimeZone);
+
+            // We need to convert the local date to the user's timezone aswell because
+            // UtcNow gets the local date from your computer
+            var localDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, userTimeZone);
+
+            // Substraction works on dates. Check out the TimeSpan's properties
+            TimeSpan span = localDate - postDate;
 
             if (span.Days > 365)
             {
@@ -89,10 +100,10 @@ namespace IdentityCheck.Services
             if (span.Minutes > 0)
                 return String.Format("about {0} {1} ago", span.Minutes, span.Minutes == 1 ? "minute" : "minutes");
 
-            if (span.Seconds > 5)
+            if (span.Seconds >= 5)
                 return String.Format("about {0} seconds ago", span.Seconds);
 
-            if (span.Seconds <= 5)
+            if (span.Seconds < 5)
                 return "just now";
 
             return string.Empty;
