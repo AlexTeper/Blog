@@ -28,6 +28,7 @@ namespace IdentityCheck
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -44,7 +45,6 @@ namespace IdentityCheck
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(

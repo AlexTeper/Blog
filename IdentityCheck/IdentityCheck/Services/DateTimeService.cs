@@ -18,7 +18,6 @@ namespace IdentityCheck.Services
 
         public IEnumerable<TimeZoneInfo> GetAvailableTimeZones()
         {
-
             return TimeZoneInfo.GetSystemTimeZones();
         }
 

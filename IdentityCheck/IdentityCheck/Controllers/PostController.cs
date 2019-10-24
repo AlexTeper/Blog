@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IdentityCheck.Models;
 using IdentityCheck.Models.RequestModels;
+using IdentityCheck.Models.ViewModels;
 using IdentityCheck.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,16 +18,17 @@ namespace IdentityCheck.Controllers
     public class PostController : Controller
     {
         private readonly IPostService postService;
-        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IUserService userService;
         private readonly IImageService imageService;
         private readonly IMapper mapper;
 
-        public PostController(IPostService postService, UserManager<ApplicationUser> userManager, IMapper mapper, IImageService imageService)
+        public PostController(IPostService postService, IMapper mapper, 
+            IImageService imageService, IUserService userService)
         {
             this.postService = postService;
-            this.userManager = userManager;
             this.imageService = imageService;
             this.mapper = mapper;
+            this.userService = userService;
         }
 
         [HttpGet("/add")]
@@ -40,7 +42,7 @@ namespace IdentityCheck.Controllers
         {
             if (ModelState.IsValid)
             {
-                var currentUser = await userManager.GetUserAsync(HttpContext.User);
+                var currentUser = await userService.GetCurrentUserAsync();
                 postRequest.Author = currentUser;
                 postRequest.AuthorId = currentUser.Id;
                 await postService.SaveAsync(postRequest);
@@ -59,10 +61,10 @@ namespace IdentityCheck.Controllers
         }
 
         [Authorize(Roles = "SuperUser")]
-        [HttpGet("/edit/{id}")]
-        public async Task<IActionResult> Edit(long id)
+        [HttpGet("/edit/{postId}")]
+        public async Task<IActionResult> Edit(long postId)
         {
-            var post = await postService.FindByIdAsync(id);
+            var post = await postService.FindByIdAsync(postId);
             var request = mapper.Map<Post, PostRequest>(post);
             return View(request);
         }
@@ -73,7 +75,7 @@ namespace IdentityCheck.Controllers
         {
             if (ModelState.IsValid)
             {
-                var currentUser = await userManager.GetUserAsync(HttpContext.User);
+                var currentUser = await userService.GetCurrentUserAsync();
                 postRequest = mapper.Map<ApplicationUser, PostRequest>(currentUser, postRequest);
                 await postService.EditAsync(id, postRequest);
                 return RedirectToAction(nameof(HomeController.Index), "Home");
@@ -85,21 +87,31 @@ namespace IdentityCheck.Controllers
         [HttpGet("/addimage/{postid}")]
         public IActionResult AddImage(long postId)
         {
-            return View(postId);
+            var imageViewModel = new ImageViewModel()
+            {
+                PostId = postId
+            };
+            return View(imageViewModel);
         }
 
         [HttpPost("/addimage/{postid}")]
-        public async Task<IActionResult> AddImage(List<IFormFile> imageList, long postId)
+        public async Task<IActionResult> AddImage(ImageViewModel imageList)
         {
-            var wrongFiles = await imageService.UploadImagesAsync(imageList, postId);
-            return RedirectToAction(nameof(Post), postId);
+            imageList.WrongFiles = await imageService.UploadImagesAsync(imageList.Images, imageList.PostId);
+            if(imageList.WrongFiles.Count == 0)
+            {
+                return RedirectToAction(nameof(Post), imageList.PostId);
+            }
+            return View(imageList);
         }
 
         [HttpGet("/post/{postId}")]
         public async Task<IActionResult> Post(long postId)
         {
-            var images = await imageService.GetImageListAsync(postId);
-            return View(images);
+            var post = await postService.FindByIdAsync(postId);
+            var viewModel = mapper.Map<Post, PostViewModel>(post);
+            viewModel.Images = await imageService.GetImageListAsync(postId);
+            return View(viewModel);
         }
     }
 }

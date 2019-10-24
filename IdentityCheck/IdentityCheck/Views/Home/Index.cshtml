@@ -11,14 +11,22 @@
     ViewBag.Title = "Home";
 }
 
-<h1 class="h1 text-center" style="padding:5px">@Localizer["My posts"]</h1>
+<h1 class="h1 text-center" style="padding:20px">@Localizer["My posts"]</h1>
 
-<form asp-controller="Home" asp-action="Index" method="get">
-    <div class="form-group">
-        <input type="text" asp-for="@Model.QueryParams.Title" class=form-control placeholder=@Localizer["Search by title"] />
-        <input type="text" asp-for="@Model.QueryParams.Description" class="form-control" placeholder=@Localizer["Search by descripton"] />
-        <button type="submit" class="btn btn-primary">@Localizer["Search"]</button>
-        <a asp-action="@Model.ActionName" class="btn btn-danger" role="button">@Localizer["Clear filters"]</a>
+<form asp-controller="Home" asp-action="Index" method="get" clas>
+    <div class="form-group col-md-offset-1">
+        <div class="form-row">
+            <div class="col">
+                <input type="text" asp-for="@Model.QueryParams.Title" class=form-control placeholder=@Localizer["Search by title"] />
+            </div>
+            <div class="col">
+                <input type="text" asp-for="@Model.QueryParams.Description" class="form-control" placeholder=@Localizer["Search by descripton"] />
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary">@Localizer["Search"]</button>
+                <a asp-action="@Model.ActionName" class="btn btn-danger" role="button">@Localizer["Clear filters"]</a>
+            </div>
+        </div>
     </div>
 </form>
 
@@ -57,9 +65,7 @@
                 @if (User.IsInRole("SuperUser"))
                 {
                     <td>
-                        <form asp-controller="Post" asp-action="Edit" asp-route-postid="@post.PostId" method="get">
-                            <button type="submit" class="btn btn-primary">@Localizer["Edit"]</button>
-                        </form>
+                        <a role="button" class="btn btn-primary" asp-controller="Post" asp-action="Edit" asp-route-postid="@post.PostId">@Localizer["Edit"]</a>
                     </td>
 
                     <td>

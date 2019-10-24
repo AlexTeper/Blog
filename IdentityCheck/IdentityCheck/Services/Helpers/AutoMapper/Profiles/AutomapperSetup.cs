@@ -15,10 +15,13 @@ namespace IdentityCheck.Services.Helpers.AutoMapper.Profiles
             {
                 cfg.AddProfile(new PostFromPostRequestProfile());
                 cfg.AddProfile(new PostRequestFromUserProfile());
+                cfg.AddProfile(new PostRequestFromPostProfile());
+                cfg.AddProfile(new PostViewModelFromPost());
             });
 
             var mapper = config.CreateMapper();
             services.AddSingleton(mapper);
+           
         }
     }
 }

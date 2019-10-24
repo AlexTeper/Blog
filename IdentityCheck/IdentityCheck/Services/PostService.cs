@@ -14,7 +14,7 @@ namespace IdentityCheck.Services
 {
     public class PostService : IPostService
     {
-
+        private const int PageSize = 5;
         private readonly ApplicationDbContext applicationDbContext;
         private readonly IMapper mapper;
 
@@ -51,7 +51,7 @@ namespace IdentityCheck.Services
                .Where(p => p.Description.Contains(queryParams.Description) || String.IsNullOrEmpty(queryParams.Description))
                .Where(p => p.Author.Email == user.Email)
                .ToListAsync();
-            return PagingList.Create(posts, 2, queryParams.Page);
+            return PagingList.Create(posts, PageSize, queryParams.Page);
         }
 
         public async Task<Post> SaveAsync(PostRequest postRequest)

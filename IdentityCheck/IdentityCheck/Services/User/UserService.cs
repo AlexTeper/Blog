@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using IdentityCheck.Data;
 using IdentityCheck.Models;
 using IdentityCheck.Models.RequestModels.Account;
-using IdentityCheck.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace IdentityCheck.Services.User
 {
@@ -18,13 +18,15 @@ namespace IdentityCheck.Services.User
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ApplicationDbContext applicationDbContext;
+        private readonly IStringLocalizer<UserService> localizer;
 
         public UserService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager
-            , ApplicationDbContext applicationDbContext)
+            , ApplicationDbContext applicationDbContext, IStringLocalizer<UserService> localizer)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.applicationDbContext = applicationDbContext;
+            this.localizer = localizer;
         }
 
         public async Task<List<Post>> GetPostsAsync(ApplicationUser user)
@@ -38,7 +40,7 @@ namespace IdentityCheck.Services.User
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                model.ErrorMessages.Add("User with the given Email does not exist");
+                model.ErrorMessages.Add(localizer["User with the given Email does not exist."]);
                 return model.ErrorMessages;
             }
             var result = await signInManager.PasswordSignInAsync(user, model.Password, isPersistent: false, lockoutOnFailure: false);
@@ -90,19 +92,19 @@ namespace IdentityCheck.Services.User
         {
             if (result.IsLockedOut)
             {
-                errors.Add("User account locked out.");
+                errors.Add(localizer["User account locked out."]);
             }
             if (result.IsNotAllowed)
             {
-                errors.Add("User is not allowed to login.");
+                errors.Add(localizer["User is not allowed to login."]);
             }
             if (result.RequiresTwoFactor)
             {
-                errors.Add("Two factor authentication is required.");
+                errors.Add(localizer["Two factor authentication is required."]);
             }
             if (!result.Succeeded)
             {
-                errors.Add("Invalid login attempt");
+                errors.Add(localizer["Invalid login attempt."]);
             }
             return errors;
         }

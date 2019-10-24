@@ -71,7 +71,6 @@ namespace IdentityCheck.Services
             {
                 if (CheckImageExtension(file) && file.Length > 0)
                 {
-
                     await SaveImagesIntoTempFolder(filePath, file);
                     using (var tempStream = new FileStream(filePath, FileMode.Open))
                     {
@@ -107,7 +106,7 @@ namespace IdentityCheck.Services
             var bitmap = new Bitmap(Image.FromStream(stream));
             Bitmap resizedBitmap = ImageResizer.ResizeImage(bitmap, size, size);
             var tempPath = Path.GetTempPath();
-            var absolutePath = tempPath + "/" + postId.ToString();
+            var absolutePath = tempPath + "/" + fileName;
             resizedBitmap.Save(absolutePath);
             return absolutePath;
         }

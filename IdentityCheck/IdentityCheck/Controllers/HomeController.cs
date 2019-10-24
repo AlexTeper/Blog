@@ -11,7 +11,6 @@ using IdentityCheck.Utils;
 
 namespace IdentityCheck.Controllers
 {
-
     public class HomeController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
