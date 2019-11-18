@@ -84,8 +84,8 @@ namespace IdentityCheck.Services.User
             {
                 return null;
             }
-
-            return await userManager.GetUserAsync(claimsPrincipal);
+            var user = await userManager.GetUserAsync(claimsPrincipal);
+            return user;
         }
 
         private List<string> checkLoginErrors(SignInResult result, List<string> errors)

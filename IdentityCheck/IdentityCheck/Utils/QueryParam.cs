@@ -9,7 +9,6 @@ namespace IdentityCheck.Utils
     {
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
-
         public int Page { get; set; } = 1;
     }
 }

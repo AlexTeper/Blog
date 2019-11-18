@@ -29,8 +29,6 @@ namespace IdentityCheck.Services
             }
 
             var timezoneinfo = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZoneId);
-
-            // We convert the time from UTC to the user's timezone
             return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timezoneinfo);
         }
 
@@ -61,17 +59,9 @@ namespace IdentityCheck.Services
 
         public string TimeAgo(ApplicationUser user, DateTime postDateTime)
         {
-            // Getting the user's timezone
             var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZoneId);
-
-            // The post date is stored in UTC so we convert it to the user's timezone
             var postDate = TimeZoneInfo.ConvertTimeFromUtc(postDateTime, userTimeZone);
-
-            // We need to convert the local date to the user's timezone aswell because
-            // UtcNow gets the local date from your computer
             var localDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, userTimeZone);
-
-            // Substraction works on dates. Check out the TimeSpan's properties
             TimeSpan span = localDate - postDate;
 
             if (span.Days > 365)

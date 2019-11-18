@@ -14,13 +14,9 @@ using ReflectionIT.Mvc.Paging;
 
 namespace IdentiyCheckTest.Controllers
 {
-   
-
 
     public class PostControllerTests
     {
-
-
         private readonly Mock<IPostService> mockPostService;
         private readonly Mock<IImageService> mockImageService;
         private readonly Mock<IUserService> mockUserService;
@@ -33,7 +29,6 @@ namespace IdentiyCheckTest.Controllers
             mockImageService = new Mock<IImageService>();
             mockMapper = new Mock<IMapper>();
         }
-
 
         [Fact]
         public async Task Add_Post_Should_Call_Service_And_Redirect()
